@@ -74,29 +74,29 @@ pub trait KubeClientExt: Clone {
     }
 
     fn configmaps<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::ConfigMap> {
-        self.k(namespace)
+        self.namespaced_k(namespace)
     }
 
     fn daemonsets<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<appsv1::DaemonSet> {
-        self.k(namespace)
+        self.namespaced_k(namespace)
     }
 
     fn deployments<'a>(
         &self,
         namespace: impl Into<Option<&'a str>>,
     ) -> api::Api<appsv1::Deployment> {
-        self.k(namespace)
+        self.namespaced_k(namespace)
     }
 
     fn secrets<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::Secret> {
-        self.k(namespace)
+        self.namespaced_k(namespace)
     }
 
     fn pods<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::Pod> {
-        self.k(namespace)
+        self.namespaced_k(namespace)
     }
 
-    fn k<'a, K>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<K>
+    fn namespaced_k<'a, K>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<K>
     where
         K: client::Resource,
         <K as client::Resource>::DynamicType: Default,
