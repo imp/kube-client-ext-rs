@@ -2,7 +2,9 @@ use k8s_openapi_ext::apiextensionsv1;
 use k8s_openapi_ext::appsv1;
 use k8s_openapi_ext::corev1;
 // use k8s_openapi_ext::metav1;
-use kube::api;
+use kube_client as client;
+
+use client::api;
 
 pub trait KubeClientExt: Clone {
     fn delete_params(&self) -> api::DeleteParams {
@@ -46,18 +48,18 @@ pub trait KubeClientExt: Clone {
     }
     fn api<K>(&self) -> api::Api<K>
     where
-        K: kube::Resource,
-        <K as kube::Resource>::DynamicType: Default;
+        K: client::Resource,
+        <K as client::Resource>::DynamicType: Default;
 
     fn default_namespaced_api<K>(&self) -> api::Api<K>
     where
-        K: kube::Resource,
-        <K as kube::Resource>::DynamicType: Default;
+        K: client::Resource,
+        <K as client::Resource>::DynamicType: Default;
 
     fn namespaced_api<K>(&self, namespace: &str) -> api::Api<K>
     where
-        K: kube::Resource,
-        <K as kube::Resource>::DynamicType: Default;
+        K: client::Resource,
+        <K as client::Resource>::DynamicType: Default;
 
     fn nodes(&self) -> api::Api<corev1::Node> {
         self.api::<corev1::Node>()
@@ -96,8 +98,8 @@ pub trait KubeClientExt: Clone {
 
     fn k<'a, K>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<K>
     where
-        K: kube::Resource,
-        <K as kube::Resource>::DynamicType: Default,
+        K: client::Resource,
+        <K as client::Resource>::DynamicType: Default,
     {
         if let Some(namespace) = namespace.into() {
             self.namespaced_api::<K>(namespace)
@@ -107,27 +109,27 @@ pub trait KubeClientExt: Clone {
     }
 }
 
-impl KubeClientExt for kube::Client {
+impl KubeClientExt for client::Client {
     fn api<K>(&self) -> api::Api<K>
     where
-        K: kube::Resource,
-        <K as kube::Resource>::DynamicType: Default,
+        K: client::Resource,
+        <K as client::Resource>::DynamicType: Default,
     {
         api::Api::<K>::all(self.clone())
     }
 
     fn default_namespaced_api<K>(&self) -> api::Api<K>
     where
-        K: kube::Resource,
-        <K as kube::Resource>::DynamicType: Default,
+        K: client::Resource,
+        <K as client::Resource>::DynamicType: Default,
     {
         api::Api::<K>::default_namespaced(self.clone())
     }
 
     fn namespaced_api<K>(&self, namespace: &str) -> api::Api<K>
     where
-        K: kube::Resource,
-        <K as kube::Resource>::DynamicType: Default,
+        K: client::Resource,
+        <K as client::Resource>::DynamicType: Default,
     {
         api::Api::<K>::namespaced(self.clone(), namespace)
     }
