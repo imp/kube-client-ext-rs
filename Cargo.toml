@@ -18,5 +18,9 @@ version = "0.15"
 features = ["v1_24"]
 
 
+[features]
+default = ["k8s-openapi/v1_24"]
+
+
 [package.metadata.docs.rs]
 features = ["k8s-openapi/v1_24"]
