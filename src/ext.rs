@@ -94,6 +94,10 @@ pub trait KubeClientExt: Clone {
         self.namespaced_k(namespace)
     }
 
+    fn services<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::Service> {
+        self.namespaced_k(namespace)
+    }
+
     fn namespaced_k<'a, K>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<K>
     where
         K: client::Resource<Scope = k8s_openapi::NamespaceResourceScope>,
