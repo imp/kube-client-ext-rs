@@ -55,16 +55,20 @@ pub trait KubeClientExt: Clone {
         K: client::Resource<Scope = k8s_openapi::NamespaceResourceScope>,
         <K as client::Resource>::DynamicType: Default;
 
+    fn apiservices(&self) -> api::Api<apiregistrationv1::APIService> {
+        self.api()
+    }
+
     fn nodes(&self) -> api::Api<corev1::Node> {
-        self.api::<corev1::Node>()
+        self.api()
     }
 
     fn namespaces(&self) -> api::Api<corev1::Namespace> {
-        self.api::<corev1::Namespace>()
+        self.api()
     }
 
     fn crds(&self) -> api::Api<apiextensionsv1::CustomResourceDefinition> {
-        self.api::<apiextensionsv1::CustomResourceDefinition>()
+        self.api()
     }
 
     fn configmaps<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::ConfigMap> {

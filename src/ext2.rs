@@ -13,6 +13,15 @@ pub trait KubeClientExt2: KubeClientExt {
     ) -> client::Result<Option<appsv1::Deployment>> {
         self.deployments(namespace).get_opt(name).await
     }
+
+    /// Get named api service
+    ///
+    async fn get_apiservice(
+        &self,
+        name: &str,
+    ) -> client::Result<Option<apiregistrationv1::APIService>> {
+        self.apiservices().get_opt(name).await
+    }
 }
 
 impl KubeClientExt2 for client::Client {}
