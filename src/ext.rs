@@ -59,6 +59,14 @@ pub trait KubeClientExt: Clone {
         self.api()
     }
 
+    fn clusterroles(&self) -> api::Api<rbacv1::ClusterRole> {
+        self.api()
+    }
+
+    fn crds(&self) -> api::Api<apiextensionsv1::CustomResourceDefinition> {
+        self.api()
+    }
+
     fn nodes(&self) -> api::Api<corev1::Node> {
         self.api()
     }
@@ -67,7 +75,11 @@ pub trait KubeClientExt: Clone {
         self.api()
     }
 
-    fn crds(&self) -> api::Api<apiextensionsv1::CustomResourceDefinition> {
+    fn persistentvolumes(&self) -> api::Api<corev1::PersistentVolume> {
+        self.api()
+    }
+
+    fn storageclasses(&self) -> api::Api<storagev1::StorageClass> {
         self.api()
     }
 
@@ -86,6 +98,24 @@ pub trait KubeClientExt: Clone {
         self.namespaced_k(namespace)
     }
 
+    fn persistentvolumeclaims<'a>(
+        &self,
+        namespace: impl Into<Option<&'a str>>,
+    ) -> api::Api<corev1::PersistentVolumeClaim> {
+        self.namespaced_k(namespace)
+    }
+
+    fn replicasets<'a>(
+        &self,
+        namespace: impl Into<Option<&'a str>>,
+    ) -> api::Api<appsv1::ReplicaSet> {
+        self.namespaced_k(namespace)
+    }
+
+    fn roles<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<rbacv1::Role> {
+        self.namespaced_k(namespace)
+    }
+
     fn secrets<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::Secret> {
         self.namespaced_k(namespace)
     }
@@ -94,7 +124,21 @@ pub trait KubeClientExt: Clone {
         self.namespaced_k(namespace)
     }
 
+    fn serviceaccounts<'a>(
+        &self,
+        namespace: impl Into<Option<&'a str>>,
+    ) -> api::Api<corev1::ServiceAccount> {
+        self.namespaced_k(namespace)
+    }
+
     fn services<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::Service> {
+        self.namespaced_k(namespace)
+    }
+
+    fn statefulsets<'a>(
+        &self,
+        namespace: impl Into<Option<&'a str>>,
+    ) -> api::Api<appsv1::StatefulSet> {
         self.namespaced_k(namespace)
     }
 
