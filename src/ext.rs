@@ -47,12 +47,12 @@ pub trait KubeClientExt: Clone {
 
     fn default_namespaced_api<K>(&self) -> api::Api<K>
     where
-        K: client::Resource<Scope = k8s_openapi::NamespaceResourceScope>,
+        K: client::Resource<Scope = k8s::openapi::NamespaceResourceScope>,
         <K as client::Resource>::DynamicType: Default;
 
     fn namespaced_api<K>(&self, namespace: &str) -> api::Api<K>
     where
-        K: client::Resource<Scope = k8s_openapi::NamespaceResourceScope>,
+        K: client::Resource<Scope = k8s::openapi::NamespaceResourceScope>,
         <K as client::Resource>::DynamicType: Default;
 
     fn apiservices(&self) -> api::Api<apiregistrationv1::APIService> {
@@ -144,7 +144,7 @@ pub trait KubeClientExt: Clone {
 
     fn namespaced_k<'a, K>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<K>
     where
-        K: client::Resource<Scope = k8s_openapi::NamespaceResourceScope>,
+        K: client::Resource<Scope = k8s::openapi::NamespaceResourceScope>,
         <K as client::Resource>::DynamicType: Default,
     {
         if let Some(namespace) = namespace.into() {
@@ -166,7 +166,7 @@ impl KubeClientExt for client::Client {
 
     fn default_namespaced_api<K>(&self) -> api::Api<K>
     where
-        K: client::Resource<Scope = k8s_openapi::NamespaceResourceScope>,
+        K: client::Resource<Scope = k8s::openapi::NamespaceResourceScope>,
         <K as client::Resource>::DynamicType: Default,
     {
         api::Api::<K>::default_namespaced(self.clone())
@@ -174,7 +174,7 @@ impl KubeClientExt for client::Client {
 
     fn namespaced_api<K>(&self, namespace: &str) -> api::Api<K>
     where
-        K: client::Resource<Scope = k8s_openapi::NamespaceResourceScope>,
+        K: client::Resource<Scope = k8s::openapi::NamespaceResourceScope>,
         <K as client::Resource>::DynamicType: Default,
     {
         api::Api::<K>::namespaced(self.clone(), namespace)
