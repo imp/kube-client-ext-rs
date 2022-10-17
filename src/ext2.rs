@@ -1,3 +1,5 @@
+use std::fmt;
+
 use super::*;
 
 /// Async extentions to `kube::Client`
@@ -21,6 +23,32 @@ pub trait KubeClientExt2: KubeClientExt {
         name: &str,
     ) -> client::Result<Option<apiregistrationv1::APIService>> {
         self.apiservices().get_opt(name).await
+    }
+
+    /// Get owner object from `ownerReference` assuming it is of kind `K`
+    ///
+    async fn get_owner_k<O, K>(&self, o: &O) -> client::Result<Option<K>>
+    where
+        O: client::ResourceExt,
+        K: Clone
+            + fmt::Debug
+            + k8s::openapi::serde::de::DeserializeOwned
+            + client::Resource<Scope = k8s::openapi::NamespaceResourceScope>,
+        <K as client::Resource>::DynamicType: Default,
+    {
+        let dynamic_default = K::DynamicType::default();
+        let kind = K::kind(&dynamic_default);
+        let namespace = o.namespace();
+        if let Some(name) = o
+            .owner_references()
+            .iter()
+            .find(|owner| owner.kind == kind)
+            .map(|owner| &owner.name)
+        {
+            self.namespaced_k(namespace.as_deref()).get_opt(name).await
+        } else {
+            Ok(None)
+        }
     }
 }
 
