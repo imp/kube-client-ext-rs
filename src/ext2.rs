@@ -6,6 +6,16 @@ use super::*;
 ///
 #[async_trait::async_trait(?Send)]
 pub trait KubeClientExt2: KubeClientExt {
+    /// Get named secret from a given (or default) namespace
+    ///
+    async fn get_secret(
+        &self,
+        name: &str,
+        namespace: impl Into<Option<&str>>,
+    ) -> client::Result<Option<corev1::Secret>> {
+        self.secrets(namespace).get_opt(name).await
+    }
+
     /// Get named deployment from a given (or default) namespace
     ///
     async fn get_deployment(
