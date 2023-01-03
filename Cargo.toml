@@ -10,8 +10,8 @@ description = "Extension trait (helpers) for kube::Client"
 [dependencies]
 async-trait = "0.1"
 k8s-openapi = { version = "0.16", features = [] }
-k8s-openapi-ext = "0.0.13"
-kube-client = "0.76"
+k8s-openapi-ext = "0.0.14"
+kube-client = "0.77"
 
 
 [dev-dependencies.k8s-openapi]
