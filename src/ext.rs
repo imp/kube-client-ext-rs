@@ -63,6 +63,10 @@ pub trait KubeClientExt: Clone {
         self.api()
     }
 
+    fn clusterrolebindings(&self) -> api::Api<rbacv1::ClusterRoleBinding> {
+        self.api()
+    }
+
     fn crds(&self) -> api::Api<apiextensionsv1::CustomResourceDefinition> {
         self.api()
     }
@@ -116,6 +120,12 @@ pub trait KubeClientExt: Clone {
         self.namespaced_k(namespace)
     }
 
+    fn rolebindings<'a>(
+        &self,
+        namespace: impl Into<Option<&'a str>>,
+    ) -> api::Api<rbacv1::RoleBinding> {
+        self.namespaced_k(namespace)
+    }
     fn secrets<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::Secret> {
         self.namespaced_k(namespace)
     }
