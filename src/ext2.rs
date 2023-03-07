@@ -35,6 +35,15 @@ pub trait KubeClientExt2: KubeClientExt {
         self.apiservices().get_opt(name).await
     }
 
+    /// Get named CRD
+    ///
+    async fn get_crd(
+        &self,
+        name: &str,
+    ) -> client::Result<Option<apiextensionsv1::CustomResourceDefinition>> {
+        self.crds().get_opt(name).await
+    }
+
     /// Get owner object from `ownerReference` assuming it is of kind `K`
     ///
     async fn get_owner_k<O, K>(&self, o: &O) -> client::Result<Option<K>>
