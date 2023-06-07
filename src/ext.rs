@@ -12,6 +12,10 @@ pub trait KubeClientExt: Clone {
         api::ListParams::default()
     }
 
+    fn watch_params(&self) -> api::WatchParams {
+        api::WatchParams::default()
+    }
+
     fn post_params(&self) -> api::PostParams {
         api::PostParams::default()
     }
