@@ -106,6 +106,14 @@ pub trait KubeClientExt: Clone {
         self.namespaced_k(namespace)
     }
 
+    fn jobs<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<batchv1::Job> {
+        self.namespaced_k(namespace)
+    }
+
+    fn cronjobs<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<batchv1::CronJob> {
+        self.namespaced_k(namespace)
+    }
+
     fn persistentvolumeclaims<'a>(
         &self,
         namespace: impl Into<Option<&'a str>>,
