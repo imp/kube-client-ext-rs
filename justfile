@@ -32,6 +32,7 @@ rustfmt:
 alias fmt := rustfmt
 
 check: rustfmt update test clippy
+fresh: clean update clippy test build
 
 fixlock:
     rm Cargo.lock
