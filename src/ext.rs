@@ -2,10 +2,19 @@ use super::*;
 
 pub trait KubeClientExt: Clone {
     fn delete_params(&self) -> api::DeleteParams {
-        api::DeleteParams {
-            grace_period_seconds: Some(0),
-            ..api::DeleteParams::default()
-        }
+        api::DeleteParams::default().grace_period(0)
+    }
+
+    fn background_delete(&self) -> api::DeleteParams {
+        api::DeleteParams::background().grace_period(0)
+    }
+
+    fn foreground_delete(&self) -> api::DeleteParams {
+        api::DeleteParams::foreground().grace_period(0)
+    }
+
+    fn orphan_delete(&self) -> api::DeleteParams {
+        api::DeleteParams::orphan().grace_period(0)
     }
 
     fn list_params(&self) -> api::ListParams {
