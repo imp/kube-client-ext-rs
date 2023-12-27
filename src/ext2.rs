@@ -4,7 +4,7 @@ use super::*;
 
 /// Async extentions to `kube::Client`
 ///
-#[async_trait::async_trait(?Send)]
+#[async_trait::async_trait]
 pub trait KubeClientExt2: KubeClientExt {
     /// Get named secret from a given (or default) namespace
     /// Return `None` if not found`
@@ -12,7 +12,7 @@ pub trait KubeClientExt2: KubeClientExt {
     async fn get_secret_opt(
         &self,
         name: &str,
-        namespace: impl Into<Option<&str>>,
+        namespace: impl Into<Option<&str>> + Send,
     ) -> client::Result<Option<corev1::Secret>> {
         self.secrets(namespace).get_opt(name).await
     }
@@ -22,7 +22,7 @@ pub trait KubeClientExt2: KubeClientExt {
     async fn get_secret(
         &self,
         name: &str,
-        namespace: impl Into<Option<&str>>,
+        namespace: impl Into<Option<&str>> + Send,
     ) -> client::Result<corev1::Secret> {
         self.secrets(namespace).get(name).await
     }
@@ -33,7 +33,7 @@ pub trait KubeClientExt2: KubeClientExt {
     async fn get_deployment_opt(
         &self,
         name: &str,
-        namespace: impl Into<Option<&str>>,
+        namespace: impl Into<Option<&str>> + Send,
     ) -> client::Result<Option<appsv1::Deployment>> {
         self.deployments(namespace).get_opt(name).await
     }
@@ -43,7 +43,7 @@ pub trait KubeClientExt2: KubeClientExt {
     async fn get_deployment(
         &self,
         name: &str,
-        namespace: impl Into<Option<&str>>,
+        namespace: impl Into<Option<&str>> + Send,
     ) -> client::Result<appsv1::Deployment> {
         self.deployments(namespace).get(name).await
     }
@@ -87,7 +87,7 @@ pub trait KubeClientExt2: KubeClientExt {
     ///
     async fn get_owner_k<O, K>(&self, o: &O) -> client::Result<Option<K>>
     where
-        O: client::ResourceExt,
+        O: client::ResourceExt + Sync,
         K: Clone
             + fmt::Debug
             + k8s::openapi::serde::de::DeserializeOwned
@@ -113,7 +113,7 @@ pub trait KubeClientExt2: KubeClientExt {
     ///
     async fn list_pods(
         &self,
-        namespace: impl Into<Option<&str>>,
+        namespace: impl Into<Option<&str>> + Send,
     ) -> client::Result<Vec<corev1::Pod>> {
         self.list_k(namespace).await
     }
@@ -122,14 +122,14 @@ pub trait KubeClientExt2: KubeClientExt {
     ///
     async fn list_deployments(
         &self,
-        namespace: impl Into<Option<&str>>,
+        namespace: impl Into<Option<&str>> + Send,
     ) -> client::Result<Vec<appsv1::Deployment>> {
         self.list_k(namespace).await
     }
 
     /// List namespaced objects of kind `K` in a given (or default) namespace
     ///
-    async fn list_k<K>(&self, namespace: impl Into<Option<&str>>) -> client::Result<Vec<K>>
+    async fn list_k<K>(&self, namespace: impl Into<Option<&str>> + Send) -> client::Result<Vec<K>>
     where
         K: Clone
             + fmt::Debug
