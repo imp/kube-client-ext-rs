@@ -115,6 +115,13 @@ pub trait KubeClientExt: Clone {
         self.namespaced_k(namespace)
     }
 
+    fn horizontalpodautoscalers<'a>(
+        &self,
+        namespace: impl Into<Option<&'a str>>,
+    ) -> api::Api<autoscalingv2::HorizontalPodAutoscaler> {
+        self.namespaced_k(namespace)
+    }
+
     fn jobs<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<batchv1::Job> {
         self.namespaced_k(namespace)
     }
