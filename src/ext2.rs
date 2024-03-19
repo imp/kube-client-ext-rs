@@ -127,6 +127,33 @@ pub trait KubeClientExt2: KubeClientExt {
         self.list_k(namespace).await
     }
 
+    /// List all `ReplicaSets` in a given (or default) namespace
+    ///
+    async fn list_replicasets(
+        &self,
+        namespace: impl Into<Option<&str>> + Send,
+    ) -> client::Result<Vec<appsv1::ReplicaSet>> {
+        self.list_k(namespace).await
+    }
+
+    /// List all `Job`s in a given (or default) namespace
+    ///
+    async fn list_jobs(
+        &self,
+        namespace: impl Into<Option<&str>> + Send,
+    ) -> client::Result<Vec<batchv1::Job>> {
+        self.list_k(namespace).await
+    }
+
+    /// List all `CronJob`s in a given (or default) namespace
+    ///
+    async fn list_cronjobs(
+        &self,
+        namespace: impl Into<Option<&str>> + Send,
+    ) -> client::Result<Vec<batchv1::CronJob>> {
+        self.list_k(namespace).await
+    }
+
     /// List namespaced objects of kind `K` in a given (or default) namespace
     ///
     async fn list_k<K>(&self, namespace: impl Into<Option<&str>> + Send) -> client::Result<Vec<K>>
