@@ -1,4 +1,8 @@
+use std::collections::BTreeMap;
 use std::fmt;
+
+use client::ResourceExt;
+use k8s::OwnerReferenceExt;
 
 use super::*;
 
@@ -170,6 +174,74 @@ pub trait KubeClientExt2: KubeClientExt {
             .await
             .map(|list| list.items)
     }
+
+    /// Get all the pods associated with the deployment
+    /// The logic is based on what `kubectl describe` does
+    ///
+    async fn get_pods_by_deployment(
+        &self,
+        name: &str,
+        namespace: impl Into<Option<&str>> + Send,
+    ) -> client::Result<Option<Vec<corev1::Pod>>> {
+        let namespace = namespace.into();
+        // Get the deployment
+        let Some(deployment) = self.get_deployment_opt(name, namespace).await? else {
+            return Ok(None);
+        };
+
+        // Get all its replicas
+        let mut replicasets = self
+            .list_replicasets(namespace)
+            .await?
+            .into_iter()
+            .filter(|rs| rs.is_controlled_by(&deployment))
+            .collect::<Vec<_>>();
+
+        // Find the `NewReplicaSet`
+        replicasets.sort_by_key(|rs| rs.creation_timestamp());
+        let Some(new) = replicasets
+            .iter()
+            .find(|rs| match_template_spec_no_hash(rs, &deployment))
+        else {
+            return Ok(None);
+        };
+
+        // Find all the Pods controlled by this ReplicaSet
+        let pods = self
+            .list_pods(namespace)
+            .await?
+            .into_iter()
+            .filter(|pod| pod.is_controlled_by(new))
+            .collect();
+
+        Ok(Some(pods))
+    }
 }
 
 impl KubeClientExt2 for client::Client {}
+
+fn match_template_spec_no_hash(rs: &appsv1::ReplicaSet, deployment: &appsv1::Deployment) -> bool {
+    let rs_template = rs_pod_template(rs).map(remove_hash);
+    let deployment_template = deployment_pod_template(deployment).map(remove_hash);
+    rs_template == deployment_template
+}
+
+fn remove_hash(template: &corev1::PodTemplateSpec) -> corev1::PodTemplateSpec {
+    let mut template = template.clone();
+    if let Some(labels) = labels_mut(&mut template) {
+        labels.remove(k8s::label::DEFAULT_DEPLOYMENT_UNIQUE_LABEL_KEY);
+    }
+    template
+}
+
+fn labels_mut(template: &mut corev1::PodTemplateSpec) -> Option<&mut BTreeMap<String, String>> {
+    template.metadata.as_mut()?.labels.as_mut()
+}
+
+fn rs_pod_template(rs: &appsv1::ReplicaSet) -> Option<&corev1::PodTemplateSpec> {
+    rs.spec.as_ref()?.template.as_ref()
+}
+
+fn deployment_pod_template(deployment: &appsv1::Deployment) -> Option<&corev1::PodTemplateSpec> {
+    deployment.spec.as_ref().map(|spec| &spec.template)
+}
