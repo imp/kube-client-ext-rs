@@ -178,37 +178,47 @@ pub trait KubeClientExt2: KubeClientExt {
     /// Get all the pods associated with the deployment
     /// The logic is based on what `kubectl describe` does
     ///
-    async fn get_pods_by_deployment(
+    async fn get_pods_by_deployment_name(
         &self,
         name: &str,
         namespace: impl Into<Option<&str>> + Send,
     ) -> client::Result<Option<Vec<corev1::Pod>>> {
-        let namespace = namespace.into();
         // Get the deployment
         let Some(deployment) = self.get_deployment_opt(name, namespace).await? else {
             return Ok(None);
         };
 
+        self.get_pods_by_deployment(&deployment).await
+    }
+
+    /// Get all the pods associated with the `deployment`
+    /// The logic is based on what `kubectl describe` does
+    ///
+    async fn get_pods_by_deployment(
+        &self,
+        deployment: &appsv1::Deployment,
+    ) -> client::Result<Option<Vec<corev1::Pod>>> {
+        let namespace = deployment.namespace();
         // Get all its replicas
         let mut replicasets = self
-            .list_replicasets(namespace)
+            .list_replicasets(namespace.as_deref())
             .await?
             .into_iter()
-            .filter(|rs| rs.is_controlled_by(&deployment))
+            .filter(|rs| rs.is_controlled_by(deployment))
             .collect::<Vec<_>>();
 
         // Find the `NewReplicaSet`
         replicasets.sort_by_key(|rs| rs.creation_timestamp());
         let Some(new) = replicasets
             .iter()
-            .find(|rs| match_template_spec_no_hash(rs, &deployment))
+            .find(|rs| match_template_spec_no_hash(rs, deployment))
         else {
             return Ok(None);
         };
 
         // Find all the Pods controlled by this ReplicaSet
         let pods = self
-            .list_pods(namespace)
+            .list_pods(namespace.as_deref())
             .await?
             .into_iter()
             .filter(|pod| pod.is_controlled_by(new))

@@ -84,6 +84,10 @@ pub trait KubeClientExt: Clone {
         self.api()
     }
 
+    fn endpoints<'a>(&self, namespace: impl Into<Option<&'a str>>) -> api::Api<corev1::Endpoints> {
+        self.namespaced_k(namespace)
+    }
+
     fn nodes(&self) -> api::Api<corev1::Node> {
         self.api()
     }
