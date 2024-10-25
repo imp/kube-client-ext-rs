@@ -21,6 +21,7 @@ features = ["latest"]
 
 [features]
 default = ["k8s-openapi/latest"]
+pedantic = []
 
 
 [package.metadata.docs.rs]
