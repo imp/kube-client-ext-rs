@@ -189,10 +189,11 @@ pub trait KubeClientExt: Clone {
         K: client::Resource<Scope = k8s::openapi::NamespaceResourceScope>,
         <K as client::Resource>::DynamicType: Default,
     {
-        if let Some(namespace) = namespace.into() {
-            self.namespaced_api::<K>(namespace)
+        let namespace = namespace.into();
+        if let Some(namespace) = namespace {
+            self.namespaced_api(namespace)
         } else {
-            self.default_namespaced_api::<K>()
+            self.default_namespaced_api()
         }
     }
 }
