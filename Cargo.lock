@@ -528,7 +528,7 @@ dependencies = [
 
 [[package]]
 name = "kube-client-ext"
-version = "0.0.44"
+version = "0.0.45"
 dependencies = [
  "async-trait",
  "k8s-openapi",
