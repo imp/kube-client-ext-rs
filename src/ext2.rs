@@ -10,6 +10,27 @@ use super::*;
 ///
 #[async_trait::async_trait]
 pub trait KubeClientExt2: KubeClientExt {
+    /// Get named configmap from a given (or default) namespace
+    /// Return `None` if not found`
+    ///
+    async fn get_configmap_opt(
+        &self,
+        name: &str,
+        namespace: impl Into<Option<&str>> + Send,
+    ) -> client::Result<Option<corev1::ConfigMap>> {
+        self.configmaps(namespace).get_opt(name).await
+    }
+
+    /// Get named configmap from a given (or default) namespace
+    ///
+    async fn get_configmap(
+        &self,
+        name: &str,
+        namespace: impl Into<Option<&str>> + Send,
+    ) -> client::Result<corev1::ConfigMap> {
+        self.configmaps(namespace).get(name).await
+    }
+
     /// Get named secret from a given (or default) namespace
     /// Return `None` if not found`
     ///
