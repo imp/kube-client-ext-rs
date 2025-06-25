@@ -41,3 +41,7 @@ fixlock:
 
 release:
     cargo release --no-confirm patch
+
+deps:
+    cargo update
+    git commit -m "Update deps" Cargo.lock
