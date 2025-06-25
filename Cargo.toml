@@ -11,7 +11,7 @@ rust-version = "1.83.0"
 [dependencies]
 async-trait = "0.1"
 k8s-openapi = { version = "0.25", features = [] }
-k8s-openapi-ext = "0.0.50"
+k8s-openapi-ext = "0.0.51"
 kube-client = { version = "1.0", default-features = false, features = [
     "client",
 ] }
