@@ -31,6 +31,8 @@ use client::api;
 
 pub use ext::KubeClientExt;
 pub use ext2::KubeClientExt2;
+pub use helper::ignore_not_found;
 
 mod ext;
 mod ext2;
+mod helper;
