@@ -3,7 +3,7 @@ name = "kube-client-ext"
 version = "2.0.1"
 edition = "2021"
 license = "Apache-2.0"
-repository = "https://gitlab.com/imp/kube-client-ext-rs"
+repository = "https://github.com/rkubectl/kube-client-ext-rs"
 description = "Extension trait (helpers) for kube::Client"
 rust-version = "1.83.0"
 
