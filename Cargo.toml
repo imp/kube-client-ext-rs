@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/rkubectl/kube-client-ext-rs"
 description = "Extension trait (helpers) for kube::Client"
-rust-version = "1.83.0"
+rust-version = "1.85.0"
 
 
 [dependencies]
